@@ -39,7 +39,7 @@ public class Iconv {
   /// - returns:
   ///   a tuple with output buffer pointer and size
   @discardableResult
-  public func convert(buf: UnsafePointer<Int8>, length: Int) -> (UnsafeMutablePointer<Int8>?, Int) {
+  internal func convert(buf: UnsafePointer<Int8>, length: Int) -> (UnsafeMutablePointer<Int8>?, Int) {
 
     // prepare larger buffers
     let cap = length * 2
@@ -65,11 +65,12 @@ public class Iconv {
     let r = iconv(cd, &pa, &sza, &pb, &szb)
 
     // free the source buffer
-    src.deinitialize()
+    src.deallocate(capacity: cap)
 
     // deal with exceptions
     guard r != -1 else {
       tag.deinitialize()
+      tag.deallocate(capacity: cap)
       return (nil, 0)
     }//end guard
 
@@ -92,7 +93,7 @@ public class Iconv {
     }//end p
     let buffer = UnsafeBufferPointer(start: p, count: sz)
     let res = Array(buffer)
-    p.deinitialize()
+    p.deallocate(capacity: buf.count * 2)
     return res
   }//end convert
 
