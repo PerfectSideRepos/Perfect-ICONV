@@ -74,8 +74,14 @@ public class Iconv {
       return (nil, 0)
     }//end guard
 
+    // destroy inner caculated pointer and return an explicit sized pointer
+    let sz = cap - szb
+    let des = UnsafeMutablePointer<Int8>.allocate(capacity: sz)
+    memcpy(des, tag, sz)
+    tag.deallocate(capacity: cap)
+
     // return the output buffer and its size
-    return (tag, cap - szb)
+    return (des, sz)
   }//end func
 
   /// a safer version of conversion
@@ -85,15 +91,13 @@ public class Iconv {
   ///   output buffer
   @discardableResult
   public func convert (buf: [Int8]) -> [Int8] {
-    var pointer: UnsafeMutablePointer<Int8>? = nil
-    var sz = 0
-    let _ = buf.withUnsafeBufferPointer{ (pointer, sz) = convert(buf: $0.baseAddress!, length: buf.count) }
+    let (pointer, size) = buf.withUnsafeBufferPointer{ return convert(buf: $0.baseAddress!, length: buf.count) }
     guard let p = pointer else {
       return []
     }//end p
-    let buffer = UnsafeBufferPointer(start: p, count: sz)
+    let buffer = UnsafeBufferPointer(start: p, count: size)
     let res = Array(buffer)
-    p.deallocate(capacity: buf.count * 2)
+    p.deallocate(capacity: size)
     return res
   }//end convert
 
@@ -105,15 +109,13 @@ public class Iconv {
   @discardableResult
   public func convert (buf: [UInt8]) -> [UInt8] {
     let cbuf:[Int8] = buf.map { Int8(bitPattern: $0) }
-    var pointer: UnsafeMutablePointer<Int8>? = nil
-    var sz = 0
-    let _ = cbuf.withUnsafeBufferPointer{ (pointer, sz) = convert(buf: $0.baseAddress!, length: buf.count) }
+    let (pointer, size) = cbuf.withUnsafeBufferPointer{ return convert(buf: $0.baseAddress!, length: buf.count) }
     guard let p = pointer else {
       return []
     }//end p
-    let buffer = UnsafeBufferPointer(start: p, count: sz)
+    let buffer = UnsafeBufferPointer(start: p, count: size)
     let res = Array(buffer)
-    p.deinitialize()
+    p.deallocate(capacity: size)
     return res.map { UInt8(bitPattern: $0) }
   }//end convert
 
