@@ -39,7 +39,7 @@ public class Iconv {
   /// - returns:
   ///   a tuple with output buffer pointer and size
   @discardableResult
-  internal func convert(buf: UnsafePointer<Int8>, length: Int) -> (UnsafeMutablePointer<Int8>?, Int) {
+  public func convert(buf: UnsafePointer<Int8>, length: Int) -> (UnsafeMutablePointer<Int8>?, Int) {
 
     // prepare larger buffers
     let cap = length * 2
