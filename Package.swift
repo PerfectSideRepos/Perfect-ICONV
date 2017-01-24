@@ -1,6 +1,6 @@
 import PackageDescription
 
-let vendor = "RockfordWei"
+let vendor = "PerfectSideRepos"
 #if os(Linux)
 let ext = "-linux"
 #else

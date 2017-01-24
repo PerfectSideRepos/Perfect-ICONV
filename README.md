@@ -63,6 +63,72 @@ do {
 }
 ```
 
+## Quick Start
+
+### Swift Package Manager
+
+Add a dependency to Package.swift:
+
+``` swift
+.Package(url: "https://github.com/PerfectSideRepos/Perfect-ICONV.git", majorVersion:1)
+```
+
+### Header Declaration
+
+Import iconv lib to your source code:
+
+``` swift
+import PerfectICONV
+```
+
+### Initialization
+
+Set the code pages before transforming encoding from one to another:
+
+``` swift
+do {
+  let iconv = try Iconv(from: .GB2312, to: .UTF_8)
+}catch(let err) {
+  /// something goes wrong here, e.g., invalid code page, etc.
+}
+```
+*NOTE*: Code Page constants could be found on source code of this project with keyword of `enum`:
+``` swift
+  public enum CodePage: String {
+    case US = "US"
+    case US_ASCII = "US-ASCII"
+    case CSASCII = "CSASCII"
+    case UTF_8 = "UTF-8"
+    case UTF8 = "UTF8"
+    ...
+  }
+```
+### Conversions
+
+PerfectICONV has a few express ways of encoding conversions:
+
+- `iconv.utf8(bytes: [Int8])` or `iconv.utf8(bytes: [UInt8])`: directly convert a signed or unsigned byte buffer from the source code page to utf-8
+
+``` swift
+let bytes:[UInt8] =  [0xd6, 0xd0, 0xb9, 0xfa, 0x0a]
+guard let china = iconv.utf8(buf: bytes) else {
+  /// something wrong
+}//end guard
+// if ok, it will print "中国"
+print(china)
+```
+
+- `iconv.convert(buf: [Int8]) -> [Int8]` or `iconv.convert(buf: [UInt8]) -> [UInt8]`: convert codepages from one byte buffer to another
+
+``` swift
+let bytes:[UInt8] =  [0xd6, 0xd0, 0xb9, 0xfa, 0x0a]
+let chinaBytes = iconv.convert(buf: bytes)
+// if nothing wrong, the chinaBytes is now an array of UInt8 which contains the expected encoding.
+```
+
+- `iconv.convert(buf: UnsafePointer<Int8>, length: Int) -> (UnsafeMutablePointer<Int8>?, Int)`: similar to Mr. Hatta's api design, convert a source encoding from a pointer with length to the objective tuple.
+ ⚠️*NOTE*⚠️ YOU MUST MANUALLY DEALLOCATE THE OUTCOME POINTER.
+
 ## Issues
 
 We are transitioning to using JIRA for all bugs and support related issues, therefore the GitHub issues has been disabled.
