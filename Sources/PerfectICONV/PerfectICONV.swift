@@ -16,8 +16,11 @@
 //
 //===----------------------------------------------------------------------===//
 //
-
-import iconv
+#if os(Linux)
+import ICONVApiLinux
+#else
+import ICONVApi
+#endif
 
 /// class Iconv
 public class Iconv {

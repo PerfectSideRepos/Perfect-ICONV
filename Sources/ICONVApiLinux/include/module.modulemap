@@ -1,0 +1,4 @@
+module ICONVApiLinux [system] {
+  header "/usr/include/iconv.h"
+  export *
+}
