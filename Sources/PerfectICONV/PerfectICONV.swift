@@ -87,12 +87,20 @@ public class Iconv {
     let r = iconv(cd, &pa, &sza, &pb, &szb)
 
     // free the source buffer
+    #if swift(>=4.1)
+    src.deallocate()
+    #else
     src.deallocate(capacity: cap)
+    #endif
 
     // deal with exceptions
     guard r != -1 else {
+      #if swift(>=4.1)
+      tag.deallocate()
+      #else
       tag.deinitialize()
       tag.deallocate(capacity: cap)
+      #endif
       return (nil, 0)
     }//end guard
 
@@ -100,7 +108,11 @@ public class Iconv {
     let sz = cap - szb
     let des = UnsafeMutablePointer<Int8>.allocate(capacity: sz)
     memcpy(des, tag, sz)
+    #if swift(>=4.1)
+    tag.deallocate()
+    #else
     tag.deallocate(capacity: cap)
+    #endif
 
     // return the output buffer and its size
     return (des, sz)
@@ -119,7 +131,11 @@ public class Iconv {
     }//end p
     let buffer = UnsafeBufferPointer(start: p, count: size)
     let res = Array(buffer)
+    #if swift(>=4.1)
+    p.deallocate()
+    #else
     p.deallocate(capacity: size)
+    #endif
     return res
   }//end convert
 
@@ -137,7 +153,11 @@ public class Iconv {
     }//end p
     let buffer = UnsafeBufferPointer(start: p, count: size)
     let res = Array(buffer)
+    #if swift(>=4.1)
+    p.deallocate()
+    #else
     p.deallocate(capacity: size)
+    #endif
     return res.map { UInt8(bitPattern: $0) }
   }//end convert
 

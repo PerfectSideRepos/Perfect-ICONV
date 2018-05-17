@@ -5,9 +5,9 @@ rm -rf Package.resolved
 swift build
 swift build -c release
 swift test
-echo "-------------- LINUX SWIFT 4.0 ----------------"
+echo "-------------- LINUX SWIFT 4.1.1 ----------------"
 rm -rf .build_linux
 rm -rf Package.resolved
-docker pull rockywei/swift:4.0
-docker run -it -v $PWD:/home rockywei/swift:4.0 /bin/bash -c "cd /home;swift build --build-path=.build_linux; swift build -c release --build-path=.build_linux;swift test --build-path=.build_linux"
+docker pull rockywei/swift:4.1.1
+docker run -it -v $PWD:/home rockywei/swift:4.1.1 /bin/bash -c "cd /home;swift build --build-path=.build_linux; swift build -c release --build-path=.build_linux;swift test --build-path=.build_linux"
 
