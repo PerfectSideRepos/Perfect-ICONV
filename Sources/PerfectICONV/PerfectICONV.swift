@@ -18,9 +18,12 @@
 //
 #if os(Linux)
 import ICONVApiLinux
+import Glibc
 #else
 import ICONVApi
+import Darwin
 #endif
+
 
 /// class Iconv
 public class Iconv {
